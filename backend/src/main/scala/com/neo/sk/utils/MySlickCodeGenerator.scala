@@ -19,8 +19,7 @@ object MySlickCodeGenerator {
 
   val slickDriver = "slick.jdbc.PostgresProfile"
   val jdbcDriver = "org.postgresql.Driver"
-//  val url = "jdbc:postgresql://127.0.0.1:5432/titans"
-  val url = "jdbc:postgresql://10.1.29.250:5432/titans"
+  val url = "jdbc:postgresql://localhost:5432/reptile?characterEncoding=utf-8"
   val outputFolder = "target/gencode/genTablesPsql"
   val pkg = "com.neo.sk.titans.models"
   val user = "titans"

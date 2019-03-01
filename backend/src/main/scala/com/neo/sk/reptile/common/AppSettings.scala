@@ -80,9 +80,6 @@ object AppSettings {
   val addresserPwd = emailConfig.getString("addresserPwd")
   val ccEmail = emailConfig.getStringList("ccAddress").asScala.toList
 
-  //ruleInfo
-  val ruleConfig = config.getConfig("rule")
-  val declaration = ruleConfig.getString("declaration")
 
   val appSecureMap = {
     val appIds = appConfig.getStringList("client.appIds").asScala
@@ -203,13 +200,4 @@ object AppSettings {
     }
   }
 
-  val dependenceConfig = config.getConfig("dependence")
-  val experimentEndTime = dependenceConfig.getInt("experimentEndTime")
-  val startUseWithOutRentTime = dependenceConfig.getInt("startUseWithOutRentTime")
-  val rentWithOutMailTime1 = dependenceConfig.getInt("rentWithOutMailTime1")
-  val rentWithOutMailTime2 = dependenceConfig.getInt("rentWithOutMailTime2")
-  val rentWithOutMailTime3 = dependenceConfig.getInt("rentWithOutMailTime3")
-  val rentWithOutMailTime4 = dependenceConfig.getInt("rentWithOutMailTime4")
-  val rentWithOutEndTime = dependenceConfig.getInt("rentWithOutEndTime")
-  val useOutMailTime = dependenceConfig.getInt("useOutMailTime")
 }
