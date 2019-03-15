@@ -1,11 +1,10 @@
 package com.neo.sk.reptile.models.dao
 
 import com.neo.sk.utils.DBUtil.driver.api._
-import com.neo.sk.reptile.models.Article
 import com.neo.sk.utils.DBUtil.db
 
 import scala.concurrent.Future
-import scala.concurrent.duration.FiniteDuration
+//import scala.concurrent.duration.FiniteDuration
 
 /**
   * User: Jason
@@ -44,13 +43,13 @@ object ArticleDao extends tArticle {
     db.run(tArticle.schema.create)
   }
 
-  def getAllArticle = {
+  def getAllArticle: Future[Seq[tArticle#TableElementType]] = {
     db.run{
       tArticle.result
     }
   }
 
-  def getLatesTime = {
+  def getLatesTime: Future[Option[Long]] = {
     db.run{
       tArticle.map(_.postTime).max.result
     }
