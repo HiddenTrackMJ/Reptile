@@ -5,6 +5,8 @@ import akka.actor.typed.ActorRef
 import org.apache.http.Header
 import org.apache.http.client.CookieStore
 import org.apache.http.message.BasicHeader
+import com.neo.sk.reptile.core.proxy._
+
 
 /**
   * User: Jason
@@ -18,6 +20,7 @@ package object spider {
     url:String,
     taskType:TaskType.Value,
     cookieStoreOption: Option[CookieStore],
+    proxyOption:Option[ProxyInfo],
     replyTo: ActorRef[SpiderRst],
     tryTime: Int = 0,
     maxTryTime: Int = 5,
@@ -29,7 +32,7 @@ package object spider {
     val columnPage, articlePage, image = Value
   }
 
-  case class SpiderTaskSuccess(entity:String,code:Int = 200)
+  case class SpiderTaskSuccess(entity:String,code:Int = 200,url: String)
   case class SpiderTaskError(entity:String,code:Int)
   final case class SpiderRst(task: SpiderTask, rst: Either[SpiderTaskError, SpiderTaskSuccess])
 

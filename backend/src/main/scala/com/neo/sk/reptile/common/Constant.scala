@@ -1,31 +1,32 @@
 package com.neo.sk.reptile.common
 
+import com.neo.sk.reptile.core.spider
+
 /**
-  * Created by dry on 2018/4/27.
-  **/
+  * User: Jason
+  * Date: 2019/3/4
+  * Time: 15:28
+  */
 object Constant {
+  object TaskPriority{
+    val column = 10
+    val article = 5
+    val image = 1
 
-  object EquipState {
-    val normal = 0
+    def genTaskPriorityByType(taskType:spider.TaskType.Value) = {
+      taskType match {
+        case spider.TaskType.columnPage =>
+          TaskPriority.column
+        case spider.TaskType.articlePage =>
+          TaskPriority.article
+        case _ =>
+          TaskPriority.image
+      }
+    }
   }
 
-  object OrderState {
-    val normal = 0
-    val canceled = 1
-    val updated = 2
-    val renew = 3 //续约
-  }
 
-  object AbnormalType {
-    val useWithoutRent = 0
-    val rentWithoutUse = 1
+  object SpiderTaskErrorCode{
+    val hestiaImageUploadError = -10
   }
-
-  object CoinRecordType {
-    val consumption = 0
-    val income = 1
-    val consumptionByAdmin = 2
-    val incomeByAdmin = 3
-  }
-
 }

@@ -61,6 +61,7 @@ object Dependencies {
   val httpclient = "org.apache.httpcomponents" % "httpclient" % httpClientV
   val httpcore = "org.apache.httpcomponents" % "httpcore" % httpCoreV
   val jsoup = "org.jsoup" % "jsoup" % jsoupVersion
+  val h2Database = "com.h2database" % "h2" % "1.4.197"
 
 
 
@@ -85,7 +86,8 @@ object Dependencies {
       Dependencies.mail,
       Dependencies.httpcore,
       Dependencies.httpclient,
-      Dependencies.jsoup
+      Dependencies.jsoup,
+      Dependencies.h2Database
 
     )
 

@@ -7,10 +7,10 @@ import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 /**
- * User: Taoz
- * Date: 7/15/2015
- * Time: 9:33 AM
- */
+  * User: Taoz
+  * Date: 7/15/2015
+  * Time: 9:33 AM
+  */
 object MySlickCodeGenerator {
 
 
@@ -19,11 +19,11 @@ object MySlickCodeGenerator {
 
   val slickDriver = "slick.jdbc.PostgresProfile"
   val jdbcDriver = "org.postgresql.Driver"
-  val url = "jdbc:postgresql://localhost:5432/reptile?characterEncoding=utf-8"
+  val url = "jdbc:postgresql://localhost:5432/reptile"
   val outputFolder = "target/gencode/genTablesPsql"
-  val pkg = "com.neo.sk.titans.models"
-  val user = "titans"
-  val password = "t20i1T8a4n25s"
+  val pkg = "com.neo.sk.hw1801a.models"
+  val user = "postgres"
+  val password = "197835"
 
 
   //val dbDriver = MySQLDriver
@@ -74,7 +74,6 @@ object MySlickCodeGenerator {
             }
           }*/
     })
-
     val codeGenerator = Await.result(codeGenFuture, Duration.Inf)
     codeGenerator.writeToFile(
       slickDriver, outputFolder, pkg, "SlickTables", "SlickTables.scala"
@@ -107,5 +106,7 @@ object MySlickCodeGenerator {
 
 
 }
+
+
 
 

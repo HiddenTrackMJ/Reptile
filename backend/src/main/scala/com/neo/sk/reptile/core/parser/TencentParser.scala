@@ -1,5 +1,6 @@
 package com.neo.sk.reptile.core.parser
 
+import com.neo.sk.reptile.core.spider.SpiderRst
 import com.neo.sk.reptile.core.{spider, task}
 import com.neo.sk.reptile.models.{Article, Comment, NewsApp}
 
@@ -11,9 +12,9 @@ import com.neo.sk.reptile.models.{Article, Comment, NewsApp}
   */
 class TencentParser(app:NewsApp) extends Parser {
 
-  override def parseArticle: Either[spider.SpiderTaskError, Article] = ???
+  override def parseArticle(rst: SpiderRst): Either[spider.SpiderTaskError, Article] = ???
 
-  override def parseColumn: Either[spider.SpiderTaskError, List[task.Task]] = ???
+  override def parseColumn(rst: SpiderRst): Either[spider.SpiderTaskError, List[task.Task]] = ???
 
-  override def parseComment: Either[spider.SpiderTaskError, Comment] = ???
+  override def parseComment(rst: SpiderRst): Either[spider.SpiderTaskError, Comment] = ???
 }

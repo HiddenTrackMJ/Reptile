@@ -16,7 +16,9 @@ import com.neo.sk.reptile.models._
   * 解析网页工具
   */
 object Parser {
-
+  def main(args: Array[String]): Unit = {
+//    val parse = new NetEaseParser()
+  }
 //  def apply(app:NewsApp,
 //    newsAppColumn:NewsAppColumn,
 //    wrapper:ActorRef[spider.SpiderRst], increment:Increment): Parser = {
@@ -31,9 +33,9 @@ object Parser {
 }
 
 trait Parser {
-  def parseColumn: Either[SpiderTaskError, List[Task]]
+  def parseColumn(rst: SpiderRst) : Either[SpiderTaskError, List[Task]]
 
-  def parseArticle: Either[SpiderTaskError, Article]
+  def parseArticle(rst: SpiderRst) : Either[SpiderTaskError, Article]
 
-  def parseComment: Either[SpiderTaskError, Comment]
+  def parseComment(rst: SpiderRst) : Either[SpiderTaskError, Comment]
 }

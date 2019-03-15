@@ -11,7 +11,6 @@ import com.neo.sk.reptile.http.HttpService
 
 import scala.language.postfixOps
 import scala.util.{Failure, Success}
-import com.neo.sk.reptile.core.SystemActor
 import akka.actor.typed.scaladsl.adapter._
 
 /**

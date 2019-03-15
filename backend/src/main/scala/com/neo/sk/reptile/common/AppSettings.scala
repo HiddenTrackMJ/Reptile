@@ -104,7 +104,7 @@ object AppSettings {
       private val articleParseCode = appCf.getString("articleParseCode")
       private val columnCf = appCf.getConfig("column")
 
-      private val sport = columnCf.getString("sport")
+      private val sport = columnCf.getString("sports")
       private val society = columnCf.getString("society")
       private val military = columnCf.getString("military")
       private val science = columnCf.getString("science")
@@ -132,7 +132,7 @@ object AppSettings {
       private val articleParseCode = appCf.getString("articleParseCode")
       private val columnCf = appCf.getConfig("column")
 
-      private val sport = columnCf.getString("sport")
+      private val sport = columnCf.getString("sports")
       private val society = columnCf.getString("society")
       private val military = columnCf.getString("military")
       private val science = columnCf.getString("science")
@@ -167,7 +167,7 @@ object AppSettings {
       private val articleParseCode = appCf.getString("articleParseCode")
       private val columnCf = appCf.getConfig("column")
 
-      private val sport = columnCf.getString("sport")
+      private val sport = columnCf.getString("sports")
       private val society = columnCf.getString("society")
       private val military = columnCf.getString("military")
       private val science = columnCf.getString("science")
