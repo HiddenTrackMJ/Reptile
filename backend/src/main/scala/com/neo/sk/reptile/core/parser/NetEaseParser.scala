@@ -1,15 +1,20 @@
 package com.neo.sk.reptile.core.parser
 
 import akka.actor.typed.ActorRef
-import com.neo.sk.reptile.core.{spider, task}
+import com.neo.sk.reptile.core.spider
 import com.neo.sk.reptile.models._
 import com.neo.sk.reptile.core.spider._
 import com.neo.sk.reptile.core.task._
 import com.neo.sk.reptile.core.Increment._
 import com.neo.sk.reptile.common.Constant._
+import com.neo.sk.reptile.core.task
+import com.neo.sk.reptile.models
 import com.neo.sk.utils.TimeUtil
+import javax.swing.text.html.parser.Entity
 import org.jsoup.Jsoup
 import org.slf4j.LoggerFactory
+
+import scala.util.{Failure, Success}
 
 /**
   * User: Jason
@@ -130,7 +135,7 @@ class NetEaseParser(app:NewsApp, newsAppColumn:NewsAppColumn, wrapper:ActorRef[s
         case ntesColumnUrlRegex(domain,ids,column,page) =>
           Right((domain,ids,column,page.toInt))
 
-        case unknow =>
+        case _ =>
           Left(SpiderTaskError(s"url=$url match failed",-4))
       }
     }catch {
@@ -143,7 +148,6 @@ class NetEaseParser(app:NewsApp, newsAppColumn:NewsAppColumn, wrapper:ActorRef[s
   private def transEntity2Json(entity:String):String = {
     val first = entity.indexOf("(")
     val end = entity.lastIndexOf(")")
-    //    println(first,end,entity.size)
     val x = entity.substring(first+1,end)
     x
   }
@@ -151,7 +155,6 @@ class NetEaseParser(app:NewsApp, newsAppColumn:NewsAppColumn, wrapper:ActorRef[s
   private def transImageList2Json(entity:String):String = {
     val first = entity.indexOf("[")
     val end = entity.lastIndexOf("]")
-    //    println(first,end,entity.size)
     val x = entity.substring(first,end+1)
     x
   }
@@ -166,7 +169,7 @@ class NetEaseParser(app:NewsApp, newsAppColumn:NewsAppColumn, wrapper:ActorRef[s
 
   }
 
-  case class NtesArticleElem(docUrl:String,newsType:String,time:String)
+  case class NtesArticleElem(docurl: String, commenturl: String, newstype: String, label: String, time: String)
 
   private def parseColumnPage(domain:String,
     ids:String,
@@ -179,21 +182,26 @@ class NetEaseParser(app:NewsApp, newsAppColumn:NewsAppColumn, wrapper:ActorRef[s
       decode[List[NtesArticleElem]](jsonStr) match {
         case Right(rsp) =>
           //          println(rsp)
-          val articleTasks = rsp.filter(t => t.newsType == "article" && t.time.length > 0 && isArticleUrl(t.docUrl))
+          val articleTasks = rsp.filter(t => t.newstype == "article" && t.time.length > 0 && isArticleUrl(t.docurl))
             .filter(t =>increment.isNew(TimeUtil.dateMMddYY2TimeStamp(t.time).toString)).map{ a =>
-            Task(spider.SpiderTask(a.docUrl,spider.TaskType.articlePage,None,None,wrapper,code = app.articleParseCode,
+            Task(spider.SpiderTask(a.docurl, None, spider.TaskType.articlePage,None,None,wrapper,code = app.articleParseCode,
               headerOpt = spider.spiderHeader.buildHeader(app.name)),TaskPriority.article,app.useProxy)
           }
+          val commentTasks = rsp.filter(t => t.newstype == "article" && t.time.length > 0 && isArticleUrl(t.docurl))
+            .filter(t =>increment.isNew(TimeUtil.dateMMddYY2TimeStamp(t.time).toString)).map{ a =>
+            Task(spider.SpiderTask(a.docurl, Some(a.commenturl),spider.TaskType.firstComment,None,None,wrapper,code = app.articleParseCode,
+              headerOpt = spider.spiderHeader.buildHeader(app.name)),TaskPriority.firstComment,app.useProxy)
+          }
           val columnTaskOpt = genNextPage(domain,ids,column,currentPage,
-            rsp.filter(t => t.newsType == "article" && t.time.length > 0 && isArticleUrl(t.docUrl))).map{ u =>
-            Task(spider.SpiderTask(u,spider.TaskType.columnPage,None,None,wrapper,code = app.columnParseCode,
+            rsp.filter(t => t.newstype == "article" && t.time.length > 0 && isArticleUrl(t.docurl))).map{ u =>
+            Task(spider.SpiderTask(u, None, spider.TaskType.columnPage,None,None,wrapper,code = app.columnParseCode,
               headerOpt = spider.spiderHeader.buildHeader(app.name)),TaskPriority.column,app.useProxy)
           }
 
           if(columnTaskOpt.isDefined){
-            Right(columnTaskOpt.get :: articleTasks)
+            Right(columnTaskOpt.get :: articleTasks ::: commentTasks)
           }else{
-            Right(articleTasks)
+            Right(articleTasks ::: commentTasks)
           }
 
         case Left(error) =>
@@ -227,5 +235,107 @@ class NetEaseParser(app:NewsApp, newsAppColumn:NewsAppColumn, wrapper:ActorRef[s
         Left(r)
     }
   }
-  override def parseComment(rst: SpiderRst) : Either[spider.SpiderTaskError, Comment] = ???
+
+  def getFirstComment(entity: String, task: SpiderTask): Either[SpiderTaskError, (List[Either[SpiderTaskError, Comment]], List[Task])] = {
+    var pages:Int = 0
+    decode[cid](entity) match {
+      case Right(rsp)   =>
+        pages = rsp.newListSize / 30 + 1
+        var cuList = List.empty[String]
+        if(pages > 1){
+          for(i <- 2 to pages){
+            val c = (i - 1) * 30
+            val b = task.url + s"?ibc=newspc&limit=30&showLevelThreshold=72&headLimit=1&tailLimit=2&offset=$c"
+            cuList = cuList :+ b
+          }
+        }
+        println(cuList)
+        val reg = """"against":(.*?)"vote":([.0-9]+)""".r
+        val comments = entity.split("\"comments\":").last.split("},\"newListSize\"").apply(0).drop(1)
+        val commentId = rsp.commentIds.filter(p =>
+          p.contains(",")).flatMap(p =>{
+          p.split(",").toList.map(p => p.toLong)
+        })
+        val jsonStr = reg.findAllIn(comments).toList.map(l => "{" + l + "}")
+        val a = jsonStr.map { j =>
+          decode[comment](j) match {
+            case Right(r) =>
+              val reply = findReply(r.commentId, commentId)
+              val cmt = models.Comment(app.id,app.name,app.nameCn,newsAppColumn.name,newsAppColumn.nameCn, r.content, TimeUtil.dateYYMMdd2TimeStamp(r.createTime),
+                r.source, r.user.nickname, r.user.avatar, task.url, task.commentUrl.getOrElse(task.url), reply, r.commentId, r.buildLevel )
+              Right(cmt)
+            case Left(error)  =>
+              Left(SpiderTaskError(s"parse comment failed, error=${error.getMessage}",-2))
+          }
+        }
+        val commentTask = cuList.map(c => Task(spider.SpiderTask(c, task.commentUrl, TaskType.comment,None,None,wrapper,code = app.articleParseCode,
+          headerOpt = spider.spiderHeader.buildHeader("netEase")),TaskPriority.comment))
+        Right(a, commentTask)
+
+      case Left(error)  =>
+        Left(SpiderTaskError(s"parse comment failed, error=${error.getMessage}",-2))
+    }
+  }
+
+  def getComment(entity: String, task: SpiderTask): Either[SpiderTaskError, (List[Either[SpiderTaskError, Comment]], List[Task])] = {
+    decode[cid](entity) match {
+      case Right(rsp)   =>
+        val reg = """"against":(.*?)"vote":([.0-9]+)""".r
+        val comments = entity.split("\"comments\":").last.split("},\"newListSize\"").apply(0).drop(1)
+        val commentId = rsp.commentIds.filter(p =>
+          p.contains(",")).flatMap(p =>{
+          p.split(",").toList.map(p => p.toLong)
+        })
+        val jsonStr = reg.findAllIn(comments).toList.map(l => "{" + l + "}")
+        val a = jsonStr.map { j =>
+          decode[comment](j) match {
+            case Right(r) =>
+              val reply = findReply(r.commentId, commentId)
+              val cmt = models.Comment(app.id,app.name,app.nameCn,newsAppColumn.name,newsAppColumn.nameCn, r.content, TimeUtil.dateYYMMdd2TimeStamp(r.createTime),
+                r.source, r.user.nickname, r.user.avatar, task.url, task.commentUrl.getOrElse(task.url), reply, r.commentId, r.buildLevel )
+              Right(cmt)
+            case Left(error)  =>
+              Left(SpiderTaskError(s"parse comment failed, error=${error.getMessage}",-2))
+          }
+        }
+        Right(a, List.empty[Task])
+
+      case Left(error)  =>
+        Left(SpiderTaskError(s"parse comment failed, error=${error.getMessage}",-2))
+    }
+  }
+
+  case class cid(commentIds: List[String], newListSize: Int)
+
+  case class user(avatar: Option[String], nickname: Option[String], userId: Long)
+
+  case class comment(buildLevel: Int, commentId: Long, content: String,
+    createTime: String, user: user, source: String, vote: Int)
+
+  private def findReply(a: Long, l: List[Long]) = {
+    var x: Long = -1
+    var i: Long = -1
+
+    l.foreach(p => {
+      if (p != a) x = p
+      else i = x
+    })
+
+    i
+  }
+
+  override def parseComment(rst: SpiderRst) : Either[spider.SpiderTaskError,
+    (List[Either[spider.SpiderTaskError, models.Comment]], List[task.Task])] = {
+    val spiderTask = rst.task
+    rst.rst match {
+      case Right(success) =>
+        if (spiderTask.taskType == TaskType.firstComment)
+          getFirstComment(success.entity, spiderTask)
+        else
+          getComment(success.entity, spiderTask)
+
+      case Left(error) =>
+        Left(error)
+    }
+  }
 }

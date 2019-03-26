@@ -2,14 +2,14 @@
 <project version="4">
   <component name="ScalaCompilerConfiguration">
     <option name="incrementalityType" value="SBT" />
-    <profile name="sbt 1" modules="reptile_8428,root" />
-    <profile name="sbt 2" modules="sharedJS,frontend">
+    <profile name="sbt 1" modules="reptile,reptile_8428,root" />
+    <profile name="sbt 2" modules=".js-shared,frontend,sharedJS">
       <option name="featureWarnings" value="true" />
       <plugins>
         <plugin path="C:\Users\Jason\.ivy2\cache\org.scala-js\scalajs-compiler_2.12.6\jars\scalajs-compiler_2.12.6-0.6.24.jar" />
       </plugins>
     </profile>
-    <profile name="sbt 3" modules="backend,sharedJVM">
+    <profile name="sbt 3" modules="backend,shared,sharedJVM">
       <option name="featureWarnings" value="true" />
     </profile>
   </component>

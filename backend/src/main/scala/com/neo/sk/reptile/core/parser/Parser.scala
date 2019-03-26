@@ -37,5 +37,5 @@ trait Parser {
 
   def parseArticle(rst: SpiderRst) : Either[SpiderTaskError, Article]
 
-  def parseComment(rst: SpiderRst) : Either[SpiderTaskError, Comment]
+  def parseComment(rst: SpiderRst) : Either[spider.SpiderTaskError, (List[Either[spider.SpiderTaskError, Comment]], List[Task])]
 }

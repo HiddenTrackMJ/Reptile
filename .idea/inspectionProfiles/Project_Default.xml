@@ -1,0 +1,12 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="AccessorLikeMethodIsUnit" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="DeclarationType" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="PostfixMethodCall" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="RelativeImport" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ScalaBundledInsRunner" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="UnitMethodDeclaredWithTypeAnnotation" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="UnitMethodDefinedLikeProcedure" enabled="true" level="WARNING" enabled_by_default="true" />
+  </profile>
+</component>

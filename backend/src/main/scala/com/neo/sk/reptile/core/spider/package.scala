@@ -18,6 +18,7 @@ package object spider {
   trait SpiderCommand
   case class SpiderTask(
     url:String,
+    commentUrl: Option[String] = None,
     taskType:TaskType.Value,
     cookieStoreOption: Option[CookieStore],
     proxyOption:Option[ProxyInfo],
@@ -29,10 +30,10 @@ package object spider {
   ) extends SpiderCommand
 
   object TaskType extends Enumeration{
-    val columnPage, articlePage, image = Value
+    val columnPage, articlePage, image , comment, firstComment= Value
   }
 
-  case class SpiderTaskSuccess(entity:String,code:Int = 200,url: String)
+  case class SpiderTaskSuccess(entity:String,code:Int = 200,url: String, commentUrl: Option[String] = None)
   case class SpiderTaskError(entity:String,code:Int)
   final case class SpiderRst(task: SpiderTask, rst: Either[SpiderTaskError, SpiderTaskSuccess])
 

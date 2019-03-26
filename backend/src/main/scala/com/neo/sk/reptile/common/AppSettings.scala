@@ -88,6 +88,19 @@ object AppSettings {
     appIds.zip(secureKeys).toMap
   }
 
+  object proxyConf {
+    private val proxyConfig = config.getConfig("proxy")
+    lazy val isWork = proxyConfig.getBoolean("isWork")
+    lazy val proxyFetchUrl = proxyConfig.getString("proxyFetchUrl")
+  }
+
+  object SpiderConf {
+    private val cf = config.getConfig("spider")
+    val isWork = cf.getBoolean("isWork")
+    val spiderNum = cf.getInt("spiderNum")
+    val idleInterval = cf.getLong("spiderIdleInterval")
+  }
+
   object NewsAppConf{
     private val cf = config.getConfig("newsApp")
 

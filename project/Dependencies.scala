@@ -8,14 +8,16 @@ import sbt._
 
 object Dependencies {
 
-  val slickV = "3.2.1"
-  val akkaV = "2.5.11"
-  val akkaHttpV = "10.1.0"
+  val slickV = "3.2.3"
+  val akkaV = "2.5.13"
+  val akkaHttpV = "10.1.3"
+  val scalaXmlV = "1.1.0"
+  val circeVersion = "0.9.3"
 
-  val circeVersion = "0.9.0"
-
-  val scalaJsDomV = "0.9.2"
-  val scalaTagsV = "0.6.5"
+  val scalaJsDomV = "0.9.6"
+  val scalaTagsV = "0.6.7"
+  val monadicHtmlV = "0.4.0-RC1"
+  val scalaCssV = "0.5.5"
   val diodeV = "1.1.2"
 
   val httpClientV= "4.5.3"
@@ -23,7 +25,7 @@ object Dependencies {
   val jsoupVersion = "1.9.2"
 
 
-  val akkaSeq = Seq(
+  val akkaSeq: Seq[ModuleID] = Seq(
     "com.typesafe.akka" %% "akka-actor" % akkaV withSources (),
     //"com.typesafe.akka" %% "akka-typed" % akkaV withSources (),
     "com.typesafe.akka" %% "akka-actor-typed" % akkaV withSources (),
@@ -31,13 +33,13 @@ object Dependencies {
     "com.typesafe.akka" %% "akka-stream" % akkaV
   )
 
-  val akkaHttpSeq = Seq(
+  val akkaHttpSeq: Seq[ModuleID] = Seq(
     "com.typesafe.akka" %% "akka-http-core" % akkaHttpV,
     "com.typesafe.akka" %% "akka-http" % akkaHttpV,
     "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpV
   )
 
-  val circeSeq = Seq(
+  val circeSeq: Seq[ModuleID] = Seq(
     "io.circe" %% "circe-core" % circeVersion,
     "io.circe" %% "circe-generic" % circeVersion,
     "io.circe" %% "circe-parser" % circeVersion
@@ -65,7 +67,7 @@ object Dependencies {
 
 
 
-  val backendDependencies =
+  val backendDependencies: Seq[ModuleID] =
     Dependencies.akkaSeq ++
     Dependencies.akkaHttpSeq ++
     Dependencies.circeSeq ++

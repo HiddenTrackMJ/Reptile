@@ -46,13 +46,16 @@ package object models {
     appNameCn:String,
     columnName:String,
     columnNameCn:String,
-    articleTitle:String,
     content:String,
     postTime:Long,
-    from:Option[String],
+    from:String,
     user:Option[String],
-    imageList:Option[List[ArticleImage]],
-    url:String
+    imageList:Option[String],
+    articleUrl:String,
+    commentUrl:String,
+    replyId:Long,
+    commentId:Long,
+    buildLevel:Int
   )
 
   case class ArticleImage(
