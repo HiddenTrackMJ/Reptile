@@ -38,7 +38,7 @@ import scala.concurrent.Future
     //  lazy val tArticle = new TableQuery(tag => new tArticle(tag))
     protected val tArticle = TableQuery[tArticle]
   }
-object ArticleDao extends tArticle {
+object ArticleDAO extends tArticle {
   def create(): Future[Unit] = {
     db.run(tArticle.schema.create)
   }
@@ -55,8 +55,10 @@ object ArticleDao extends tArticle {
     }
   }
 
-  def addArticle(article: rArticle): Future[Int] = {
-    db.run(tArticle += article)
+  def addArticle(articles:Iterable[rArticle]): Future[Option[Int]] = {
+    db.run(
+      tArticle.++=(articles)
+    )
   }
 
   def deleteArticle(name:String):Future[Int] =

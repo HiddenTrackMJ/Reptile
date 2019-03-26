@@ -1,6 +1,6 @@
 package com.neo.sk.reptile.core.Increment
 
-import com.neo.sk.reptile.models.dao.ArticleDao.getLatesTime
+import com.neo.sk.reptile.models.dao.ArticleDAO.getLatesTime
 import org.slf4j.LoggerFactory
 import scala.util.{Failure, Success}
 import com.neo.sk.reptile.Boot.executor

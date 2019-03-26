@@ -74,7 +74,7 @@ object SpiderManager {
           Behaviors.same
 
         case other =>
-          log.warn(s"${ctx.self.path} recv an unknown,msg=$msg")
+          log.warn(s"${ctx.self.path} recv an unknown,msg=$other")
           Behaviors.ignore
       }
     }

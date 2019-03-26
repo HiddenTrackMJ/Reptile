@@ -547,7 +547,7 @@ import com.neo.sk.reptile.models
 
   import com.neo.sk.reptile.core.Increment.IncrementByTime
   import com.neo.sk.reptile.core.spider.spiderHeader.buildHeader
-  import com.neo.sk.reptile.models.dao.{rArticle, ArticleDao}
+  import com.neo.sk.reptile.models.dao.{rArticle, ArticleDAO}
 
   case class imageListElem(img: String, title: String, note: String)
 
