@@ -1,10 +1,12 @@
 package com.neo.sk.reptile.core.parser
 
+import akka.actor.typed.ActorRef
+import com.neo.sk.reptile.core.increment.Increment
 import com.neo.sk.reptile.core.spider.{SpiderRst, SpiderTaskError}
 import com.neo.sk.reptile.core.spider
 import com.neo.sk.reptile.core.task
 import com.neo.sk.reptile.core.task.Task
-import com.neo.sk.reptile.models.{Article, Comment, NewsApp}
+import com.neo.sk.reptile.models.{Article, Comment, NewsApp, NewsAppColumn}
 
 /**
   * User: Jason
@@ -12,7 +14,7 @@ import com.neo.sk.reptile.models.{Article, Comment, NewsApp}
   * Time: 10:59
   * 腾讯新闻解析
   */
-class TencentParser(app:NewsApp) extends Parser {
+class TencentParser(app:NewsApp, newsAppColumn:NewsAppColumn, wrapper:ActorRef[spider.SpiderRst], increment:Increment) extends Parser {
 
   override def parseArticle(rst: SpiderRst): Either[spider.SpiderTaskError, Article] = ???
 

@@ -1,7 +1,8 @@
 package com.neo.sk.utils
 
+import com.neo.sk.utils.DBUtil.driver
 import com.zaxxer.hikari.HikariDataSource
-import org.slf4j.LoggerFactory
+import org.slf4j.{Logger, LoggerFactory}
 import slick.jdbc.PostgresProfile.api._
 import slick.jdbc.H2Profile
 
@@ -11,7 +12,7 @@ import slick.jdbc.H2Profile
  * Time: 4:33 PM
  */
 object DBUtil {
-  val log = LoggerFactory.getLogger(this.getClass)
+  val log: Logger = LoggerFactory.getLogger(this.getClass)
   private val dataSource = createDataSource()
 
   import com.neo.sk.reptile.common.AppSettings._
@@ -42,7 +43,7 @@ object DBUtil {
 
   import driver.api.Database
 
-  val db = Database.forDataSource(dataSource, Some(slickMaximumPoolSize))
+  val db: driver.backend.DatabaseDef = Database.forDataSource(dataSource, Some(slickMaximumPoolSize))
 
 
 

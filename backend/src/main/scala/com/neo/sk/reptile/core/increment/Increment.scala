@@ -1,4 +1,4 @@
-package com.neo.sk.reptile.core.Increment
+package com.neo.sk.reptile.core.increment
 
 /**
   * User: Jason

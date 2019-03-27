@@ -1,140 +1,115 @@
--- user table
-CREATE SEQUENCE user_id_seq START WITH 10000;
-CREATE TABLE users (
-  id        BIGINT PRIMARY KEY DEFAULT nextval('user_id_seq'),
-  username      VARCHAR(255)   NOT NULL,
-  secure_pwd    VARCHAR(255)   NOT NULL,
-  email         VARCHAR(255)   NOT NULL,
-  linux_account VARCHAR(128)   NOT NULL,
-  coin_standard INT            NOT NULL,
-  create_time   BIGINT         NOT NULL,
-  state         INT            NOT NULL DEFAULT 0,
-  coin          FLOAT          NOT NULL DEFAULT 0
+CREATE SEQUENCE article_id_seq START WITH 10000000;
+create table article
+(
+  aid            bigint       default nextval('article_id_seq'::regclass) not null
+    constraint article_pkey
+      primary key,
+  app_id         integer                                                  not null,
+  app_name       varchar(32)  default ''::character varying               not null,
+  app_name_cn    varchar(32)  default ''::character varying               not null,
+  column_name    varchar(32)  default ''::character varying               not null,
+  column_name_cn varchar(32)  default ''::character varying               not null,
+  title          text         default ''::text                            not null,
+  content        text         default ''::text                            not null,
+  html           text         default ''::text                            not null,
+  post_time      bigint       default 0                                   not null,
+  src            varchar(32),
+  author         varchar(32),
+  src_image      text,
+  src_url        varchar(128) default ''::character varying               not null
 );
 
-CREATE TABLE admin (
-  id          SERIAL8 PRIMARY KEY NOT NULL,
-  account     VARCHAR(255) NOT NULL,
-  secure_pwd  VARCHAR(255) NOT NULL,
-  create_time BIGINT NOT NULL
+
+CREATE INDEX article_time_index on article(post_time);
+CREATE INDEX article_column_index on article(column_name);
+CREATE UNIQUE INDEX article_src_url on article(src_url);
+create index article_column_aid_index on article(column_name,aid);
+
+CREATE TABLE article_image(
+  src_image VARCHAR(128) PRIMARY KEY ,
+  hestia_image VARCHAR(128) NOT NULL DEFAULT ''
 );
 
-CREATE TABLE coins_record (
-  uid          BIGINT       NOT NULL,
-  record_type  INT          NOT NULL,
-  coins        FLOAT        NOT NULL,
-  remark       VARCHAR(512) NOT NULL,
-  order_id     BIGINT,
-  create_time  BIGINT       NOT NULL
+CREATE SEQUENCE spider_failed_task_id_seq START WITH 10000000;
+CREATE TABLE spider_failed_task(
+  id        BIGINT PRIMARY KEY DEFAULT nextval('spider_failed_task_id_seq'),
+  app_id INTEGER NOT NULL ,
+  app_name VARCHAR(32) NOT NULL DEFAULT '',
+  app_name_cn VARCHAR(32) NOT NULL DEFAULT '',
+  url VARCHAR(128) NOT NULL DEFAULT '',
+  task_type VARCHAR (16) NOT NULL DEFAULT '',
+  error TEXT NOT NULL DEFAULT '',
+  create_time BIGINT NOT NULL DEFAULT 0
 );
 
-CREATE SEQUENCE rent_order_id_seq START WITH 5000000;
-CREATE TABLE rent_order (
-  id         BIGINT PRIMARY KEY DEFAULT nextval('rent_order_id_seq'),
-  user_id    BIGINT      NOT NULL,
-  user_name  VARCHAR(255)   NOT NULL,
-  equ_id     BIGINT      NOT NULL,
-  start_time BIGINT      NOT NULL,
-  end_time   BIGINT      NOT NULL,
-  cost_coins FLOAT         NOT NULL,
-  state      INT         NOT NULL DEFAULT 0,
-  create_time BIGINT NOT NULL,
-  return_coins FLOAT,
-  equ_ip     VARCHAR(255)   NOT NULL,
-  equ_name   VARCHAR(255)   NOT NULL
+
+CREATE TABLE news_column(
+  column_name VARCHAR(32) PRIMARY KEY ,
+  column_name_cn VARCHAR(32) NOT NULL DEFAULT ''
 );
 
-CREATE TABLE abnormal_usage (
-  id         SERIAL8 PRIMARY KEY NOT NULL,
-  abnormal_type INT         NOT NULL,
-  user_id       BIGINT      NOT NULL,
-  equ_id        BIGINT      NOT NULL,
-  equ_name      VARCHAR(255)  NOT NULL,
-  start_time    BIGINT,
-  end_time      BIGINT,
-  duration      INT,
-  fine          FLOAT         NOT NULL
+CREATE SEQUENCE user_deifin_column_id_seq START WITH 10000000;
+CREATE TABLE user_define_column(
+  id BIGINT PRIMARY KEY DEFAULT nextval('user_deifin_column_id_seq'),
+  account_id BIGINT NOT NULL DEFAULT 0,
+  column_name VARCHAR(32) NOT NULL DEFAULT '',
+  column_name_cn VARCHAR(32) NOT NULL DEFAULT '',
+  create_time BIGINT NOT NULL DEFAULT 0
 );
 
-CREATE SEQUENCE machine_id_seq START WITH 70000;
-CREATE TABLE machine (
-  id         BIGINT PRIMARY KEY DEFAULT nextval('machine_id_seq'),
-  name       VARCHAR(128) NOT NULL,
-  ip         VARCHAR(64) NOT NULL
+
+CREATE SEQUENCE account_id_seq START WITH 10000000;
+CREATE TABLE account(
+  id        BIGINT PRIMARY KEY DEFAULT nextval('account_id_seq'),
+  account_name VARCHAR(32) NOT NULL,
+  password VARCHAR(128) NOT NULL DEFAULT '',
+  create_time BIGINT NOT NULL DEFAULT 0
 );
 
-CREATE SEQUENCE gpu_equipment_id_seq START WITH 90000;
-CREATE TABLE gpu_equipment (
-  id          BIGINT PRIMARY KEY DEFAULT nextval('gpu_equipment_id_seq'),
-  machine_id  BIGINT       NOT NULL,
-  machine_ip  VARCHAR(64) NOT NULL,
-  name        VARCHAR(64) NOT NULL,
-  fee         INT     NOT NULL,
-  create_time BIGINT       NOT NULL
+CREATE UNIQUE INDEX account_name_index on account(account_name);
+
+
+CREATE SEQUENCE comment_id_seq START WITH 10000000;
+create TABLE comment(
+  cid        BIGINT PRIMARY KEY DEFAULT nextval('comment_id_seq'),
+  app_id    INTEGER NOT NULL ,
+  app_name   VARCHAR(32)   NOT NULL DEFAULT '',
+  app_name_cn   VARCHAR(32)   NOT NULL DEFAULT '',
+  column_name VARCHAR(32)   NOT NULL DEFAULT '',
+  column_name_cn VARCHAR(32)   NOT NULL DEFAULT '',
+  content TEXT NOT NULL DEFAULT '' ,
+  postTime BIGINT NOT NULL DEFAULT 0,
+  source TEXT NOT NULL DEFAULT '' ,
+  user VARCHAR(128) NULL,
+  userId BIGINT NULL,
+  imageList TEXT NULL,
+  articleUrl VARCHAR(128) NOT NULL DEFAULT '',
+  commentUrl VARCHAR(128) NOT NULL DEFAULT '',
+  replyId BIGINT NULL,
+  commentId BIGINT NOT NULL DEFAULT 0,
+  buildLevel INTEGER NOT NULL DEFAULT 1,
+  vote INTEGER NOT NULL DEFAULT 0
 );
+create index comment_article_index ON comment(article_id);
 
-CREATE TABLE coins_standard_record (
-  uid          BIGINT       NOT NULL,
-  old_standard INT          NOT NULL,
-  new_standard INT          NOT NULL,
-  remark       VARCHAR(512) NOT NULL,
-  create_time  BIGINT       NOT NULL
+
+CREATE TABLE article_thumb_up(
+  article_id BIGINT NOT NULL DEFAULT 0,
+  account_id BIGINT NOT NULL DEFAULT 0,
+  create_time BIGINT NOT NULL DEFAULT 0
 );
+create index article_thumb_up_index on article_thumb_up(article_id);
+create index account_thumb_up_index on article_thumb_up(article_id,account_id);
 
-CREATE  SEQUENCE  process_kill_id_seq START WITH 200000;
-CREATE TABLE process_kill (
-  id             BIGINT PRIMARY KEY DEFAULT  NEXTVAL('process_kill_id_seq'),
-  process_id     BIGINT        NOT NULL,
-  linux_account  VARCHAR(128)  NOT NULL,
-  gpu_ip         VARCHAR(64)   NOT NULL,
-  gpu_name       VARCHAR(64)   NOT NULL,
-  reason         VARCHAR(512)  NOT NULL,
-  creat_time     BIGINT        NOT NULL
+
+
+ALTER TABLE public.article_image DROP CONSTRAINT article_image_pkey;
+DROP INDEX public.article_image_pkey RESTRICT;
+ALTER TABLE public.article_image ALTER COLUMN src_image SET DEFAULT '';
+CREATE INDEX article_image_src_image_index ON public.article_image (src_image);
+
+CREATE TABLE articleDuplicatedRecord(
+   src_url VARCHAR(128) NOT NULL DEFAULT '',
+   duplicated_url VARCHAR (128) NOT NULL DEFAULT '',
+   create_time BIGINT NOT NULL DEFAULT 0
 );
-
-ALTER TABLE public.abnormal_usage ALTER COLUMN fine TYPE FLOAT USING fine::FLOAT;
-ALTER TABLE public.abnormal_usage ALTER COLUMN user_id DROP NOT NULL;
-ALTER TABLE public.abnormal_usage ADD user_name VARCHAR(255) DEFAULT '' NOT NULL;
-ALTER TABLE public.abnormal_usage ADD equ_ip VARCHAR(255) DEFAULT '' NOT NULL;
-ALTER TABLE public.abnormal_usage ALTER COLUMN duration SET NOT NULL;
-ALTER TABLE public.users ALTER COLUMN email TYPE VARCHAR(512) USING email::VARCHAR(512);
-
-ALTER TABLE public.rent_order ADD linux_account VARCHAR(255) DEFAULT '' NOT NULL;
-ALTER TABLE public.rent_order ADD email VARCHAR(255) DEFAULT '' NOT NULL;
-
-CREATE SEQUENCE rent_record_id_seq START WITH 1000000;
-CREATE TABLE rent_record (
-  id         BIGINT PRIMARY KEY DEFAULT nextval('rent_record_id_seq'),
-  user_id    BIGINT      NOT NULL,
-  user_name  VARCHAR(255)   NOT NULL,
-  equ_id     BIGINT      NOT NULL,
-  start_time BIGINT      NOT NULL,
-  end_time   BIGINT      NOT NULL,
-  cost_coins FLOAT         NOT NULL,
-  state      INT         NOT NULL DEFAULT 0,
-  create_time BIGINT NOT NULL,
-  return_coins FLOAT,
-  equ_ip     VARCHAR(255)   NOT NULL,
-  equ_name   VARCHAR(255)   NOT NULL,
-  linux_account VARCHAR(255) DEFAULT '' NOT NULL,
-  email VARCHAR(255) DEFAULT '' NOT NULL
-);
-
-alter table public.machine add priority Int default 1;
-alter table public.gpu_equipment add memory Int default 64;
-
-ALTER TABLE public.gpu_equipment ALTER COLUMN memory SET DEFAULT 12198;
-ALTER TABLE public.gpu_equipment ALTER COLUMN memory SET NOT NULL;
-
-
-
-
-
-
-
-
-
-
-
-
-

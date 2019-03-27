@@ -4,6 +4,7 @@ import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl._
 //import com.neo.sk.reptile.core.spider.SpiderTask
 import com.neo.sk.reptile.models.dao._
+import com.neo.sk.reptile.models.SlickTables._
 //import com.neo.sk.reptile.models.dao.{ArticleDAO, SpiderTaskDAO}
 import org.slf4j.LoggerFactory
 import com.neo.sk.reptile.Boot.executor
@@ -27,7 +28,7 @@ object StoreActor {
 
 //  final case class StoreArticleImage(image:Iterable[rArticleImage]) extends Command
 //
-//  final case class StoreSpiderTaskFailed(t:rSpiderFailedTask) extends Command
+  final case class StoreSpiderTaskFailed(t:rSpiderFailedTask) extends Command
 //
 //  final case class StoreArticleDuplicated(rs:Iterable[rArticleduplicatedrecord]) extends Command
 
@@ -49,7 +50,7 @@ object StoreActor {
             case Success(_) =>
               ctx.self ! SwitchBehavior("working",work)
             case Failure(e) =>
-              log.warn(s"${ctx.self.path} add article failed,article=$article,error=${e.getMessage}")
+              log.warn(s"${ctx.self.path} add article failed,article=${article.map(_.srcUrl)},error=${e.getMessage}")
               ctx.self ! SwitchBehavior("work",work)
           }
           busy(Nil)
@@ -64,15 +65,15 @@ object StoreActor {
 //          }
 //          busy(Nil)
 //
-//        case StoreSpiderTaskFailed(t) =>
-//          SpiderTaskDAO.addTaskFailed(t).onComplete{
-//            case Success(_) =>
-//              ctx.self ! SwitchBehavior("working",working)
-//            case Failure(e) =>
-//              log.warn(s"${ctx.self.path} inser spider task failed,task=${t},error=${e.getMessage}")
-//              ctx.self ! SwitchBehavior("working",working)
-//          }
-//          busy(Nil)
+        case StoreSpiderTaskFailed(t) =>
+          SpiderFailedTaskDAO.addSpiderFailedTask(t).onComplete{
+            case Success(_) =>
+              ctx.self ! SwitchBehavior("working", work)
+            case Failure(e) =>
+              log.warn(s"${ctx.self.path} add spider task failed,task=,error=")
+              ctx.self ! SwitchBehavior("working", work)
+          }
+          busy(Nil)
 //
 //        case StoreArticleDuplicated(rs) =>
 //          ArticleDAO.insertArticleDuplicatedRecord(rs).onComplete{

@@ -1,6 +1,6 @@
-package com.neo.sk.reptile.core.Increment
+package com.neo.sk.reptile.core.increment
 
-import com.neo.sk.reptile.models.dao.ArticleDAO.getLatesTime
+import com.neo.sk.reptile.models.dao.ArticleDAO.getLatestTime
 import org.slf4j.LoggerFactory
 import scala.util.{Failure, Success}
 import com.neo.sk.reptile.Boot.executor
@@ -17,7 +17,7 @@ class IncrementByTime extends Increment {
 
 
   override def initial(): Unit = {
-    getLatesTime.onComplete{
+    getLatestTime.onComplete{
       case Success(t) =>
         if (t.isDefined) {
           latestArticleTime = t.get

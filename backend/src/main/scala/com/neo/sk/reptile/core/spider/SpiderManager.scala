@@ -4,7 +4,7 @@ package com.neo.sk.reptile.core.spider
 import akka.actor.typed.{ActorRef, Behavior}
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import com.neo.sk.reptile.core.proxy.ProxyManager
-import com.neo.sk.reptile.core.task.TaskManager
+import com.neo.sk.reptile.core.task.{Task, TaskManager}
 import org.slf4j.LoggerFactory
 import com.neo.sk.reptile.core.{spider, task}
 
@@ -28,7 +28,7 @@ object SpiderManager {
 
   case object StopSpider extends Command
 
-  case class AddTask(task: task.Task) extends Command
+  case class AddTask(task: Task) extends Command
 
   def create():Behavior[Command] = {
     log.debug(s"spider Manager is starting...")
@@ -51,7 +51,7 @@ object SpiderManager {
       msg match {
         case StartSpider =>
           if(!isWorking){
-            (1 to spiderNum).foreach(i => getSpider(ctx,taskManager,proxyManager,i))
+            (1 to spiderNum).foreach(i => getSpider(ctx, taskManager, proxyManager, i))
             work(taskManager,proxyManager,!isWorking)
           }else{
             Behaviors.same

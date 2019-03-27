@@ -13,11 +13,17 @@
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql://localhost:5432/reptile</jdbc-url>
     </data-source>
-    <data-source source="LOCAL" name="rep" uuid="6000cf0e-f599-46b9-9760-1375d8a34f34">
+    <data-source source="LOCAL" name="rep" uuid="f5745bc1-9336-4448-8d5e-bdf1ea6f641e">
       <driver-ref>h2.unified</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.h2.Driver</jdbc-driver>
-      <jdbc-url>jdbc:h2:./dataBase/rep</jdbc-url>
+      <jdbc-url>jdbc:h2:file:./dataBase/rep</jdbc-url>
+    </data-source>
+    <data-source source="LOCAL" name="reptile.mv.db" uuid="afaf7218-49b1-45fb-880c-8dcd7fa684bf">
+      <driver-ref>h2.unified</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.h2.Driver</jdbc-driver>
+      <jdbc-url>jdbc:h2:$PROJECT_DIR$/data/reptile.mv.db</jdbc-url>
     </data-source>
   </component>
 </project>

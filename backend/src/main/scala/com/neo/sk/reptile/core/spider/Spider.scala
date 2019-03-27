@@ -6,7 +6,7 @@ import com.neo.sk.reptile.core.task
 import com.neo.sk.reptile.Boot.executor
 import com.neo.sk.reptile.common.Constant.{SpiderTaskErrorCode, TaskPriority}
 import com.neo.sk.reptile.core.proxy.{ProxyInfo, ProxyManager}
-import com.neo.sk.reptile.core.task.{FetchTask, Task, TaskManager}
+import com.neo.sk.reptile.core.task.{FetchTask, Task, TaskCommand, TaskManager}
 import com.neo.sk.utils.HttpClientUtil
 import org.apache.http.Header
 import org.apache.http.client.CookieStore
@@ -85,7 +85,7 @@ object Spider {
     }
 
 
-  def work(taskManager: ActorRef[task.TaskCommand],
+  def work(taskManager: ActorRef[TaskCommand],
     proxyManager:ActorRef[ProxyManager.Command],
     task:SpiderTask,
     cmdStash:List[SpiderCommand])(
@@ -157,7 +157,7 @@ object Spider {
 
   private def handleRetryTaskByProxy(
     task:SpiderTask,
-    taskManager: ActorRef[task.TaskCommand],
+    taskManager: ActorRef[TaskCommand],
     error:Throwable
   ): Unit = {
     if(task.tryTime >= task.maxTryTime){

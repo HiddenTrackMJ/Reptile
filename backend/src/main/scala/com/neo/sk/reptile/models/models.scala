@@ -50,12 +50,14 @@ package object models {
     postTime:Long,
     from:String,
     user:Option[String],
+    userId:Long,
     imageList:Option[String],
     articleUrl:String,
     commentUrl:String,
     replyId:Long,
     commentId:Long,
-    buildLevel:Int
+    buildLevel:Int,
+    vote: Int
   )
 
   case class ArticleImage(

@@ -14,7 +14,7 @@ import scala.concurrent.duration.Duration
 object MySlickCodeGenerator {
 
 
-  import concurrent.ExecutionContext.Implicits.global
+  import scala.concurrent.ExecutionContext.Implicits.global
 
 
   val slickDriver = "slick.jdbc.PostgresProfile"
@@ -32,7 +32,7 @@ object MySlickCodeGenerator {
 
 
 
-  def genCustomTables(dbDriver: JdbcProfile) = {
+  def genCustomTables(dbDriver: JdbcProfile): Unit = {
 
     // fetch data model
     val driver: JdbcProfile =
@@ -49,10 +49,10 @@ object MySlickCodeGenerator {
     // customize code generator
     val codeGenFuture = modelFuture.map(model => new SourceCodeGenerator(model) {
       // override mapped table and class name
-      override def entityName =
+      override def entityName: String => String =
         dbTableName => "r" + dbTableName.toCamelCase
 
-      override def tableName =
+      override def tableName: String => String =
         dbTableName => "t" + dbTableName.toCamelCase
 
       // add some custom import
@@ -83,7 +83,7 @@ object MySlickCodeGenerator {
   }
 
 
-  def genDefaultTables() = {
+  def genDefaultTables(): Unit = {
 
     slick.codegen.SourceCodeGenerator.main(
       Array(slickDriver, jdbcDriver, url, outputFolder, pkg, user, password)
@@ -94,7 +94,7 @@ object MySlickCodeGenerator {
 
 
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]) : Unit ={
     //genDefaultTables()
     val dbDriver = slick.jdbc.PostgresProfile
 

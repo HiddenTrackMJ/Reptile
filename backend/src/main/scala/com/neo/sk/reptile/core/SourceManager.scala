@@ -30,10 +30,10 @@ object SourceManager {
 
   def create(spiderManager:ActorRef[SpiderManager.Command],
     storeActor: ActorRef[StoreActor.Command]) :Behavior[Command] = {
-    log.debug(s"NewsAppManager is starting")
+    log.debug(s"SourceManager is starting")
     Behaviors.setup[Command]{ ctx =>
       Behaviors.withTimers{ timer =>
-        init
+        init()
         log.debug(s"newsApp=${newsAppMap.size}")
         ctx.self ! StartWork
         idle(spiderManager, newsAppMap, storeActor, timer)

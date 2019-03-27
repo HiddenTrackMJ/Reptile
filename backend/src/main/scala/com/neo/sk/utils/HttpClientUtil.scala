@@ -461,7 +461,7 @@ import com.neo.sk.reptile.models
                     case Right(r) =>
                       val reply = findReply(r.commentId, commentId)
                       val cmt = models.Comment(1,"netEase", "网易", "sss", "qqq", r.content, TimeUtil.dateYYMMdd2TimeStamp(r.createTime),
-                        r.source, r.user.nickname, r.user.avatar, url, url, reply, r.commentId, r.buildLevel )
+                        r.source, r.user.nickname,r.user.userId, r.user.avatar, url, url, reply, r.commentId, r.buildLevel, r.vote )
                       println(cmt)
                       Right(cmt)
                     case Left(error)  =>
@@ -545,9 +545,10 @@ import com.neo.sk.reptile.models
   //    listCom
   //  }
 
-  import com.neo.sk.reptile.core.Increment.IncrementByTime
+  import com.neo.sk.reptile.core.increment.IncrementByTime
   import com.neo.sk.reptile.core.spider.spiderHeader.buildHeader
-  import com.neo.sk.reptile.models.dao.{rArticle, ArticleDAO}
+  import com.neo.sk.reptile.models.dao.ArticleDAO
+  import com.neo.sk.reptile.models.SlickTables._
 
   case class imageListElem(img: String, title: String, note: String)
 

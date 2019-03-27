@@ -29,7 +29,7 @@ object SourceActor {
   def create(spiderManager: ActorRef[SpiderManager.Command],
     storeActor: ActorRef[StoreActor.Command],
     newsApp: NewsApp) :Behavior[Command] = {
-    log.debug(s"NewsAppManager is starting")
+    log.debug(s"SourceActor is starting")
     Behaviors.setup[Command]{ ctx =>
       Behaviors.withTimers{ timer =>
         ctx.self ! StartWork
@@ -46,7 +46,7 @@ object SourceActor {
 
       msg match {
         case StartWork =>
-          newsApp.column.foreach(getColumn(ctx,spiderManager,storeActor, newsApp, _, newsApp.useProxy, newsApp.increment))
+          newsApp.column.foreach(getColumn(ctx, spiderManager, storeActor, newsApp, _, newsApp.useProxy, newsApp.increment))
           Behaviors.same
 
         case ChildDead(name:String)  =>

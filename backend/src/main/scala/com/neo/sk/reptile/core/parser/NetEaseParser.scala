@@ -5,7 +5,7 @@ import com.neo.sk.reptile.core.spider
 import com.neo.sk.reptile.models._
 import com.neo.sk.reptile.core.spider._
 import com.neo.sk.reptile.core.task._
-import com.neo.sk.reptile.core.Increment._
+import com.neo.sk.reptile.core.increment._
 import com.neo.sk.reptile.common.Constant._
 import com.neo.sk.reptile.core.task
 import com.neo.sk.reptile.models
@@ -95,7 +95,7 @@ class NetEaseParser(app:NewsApp, newsAppColumn:NewsAppColumn, wrapper:ActorRef[s
           decode[List[imageListElem]](list) match {
             case Right(rsp) =>
               imageList = rsp.map(r => ArticleImage(r.img,Some(r.title)))
-              println(imageList.toString())
+//              println(imageList.toString())
             case Left(e) => println(s"decode error: $e")
           }
           Right(Article(app.id,app.name,app.nameCn,newsAppColumn.name,newsAppColumn.nameCn,title,imageList.toString(),"",time,None,None,Some(imageList),url))
@@ -105,7 +105,7 @@ class NetEaseParser(app:NewsApp, newsAppColumn:NewsAppColumn, wrapper:ActorRef[s
 
     }catch {
       case e:Exception =>
-        log.debug(s"parse article failed,error=${e.getMessage} and content=\n$str")
+        log.debug(s"parse article failed,error=${e.getMessage} and content=\n")
         Left(SpiderTaskError(s"parse article failed,error=${e.getMessage}",-3))
     }
   }
@@ -249,7 +249,7 @@ class NetEaseParser(app:NewsApp, newsAppColumn:NewsAppColumn, wrapper:ActorRef[s
             cuList = cuList :+ b
           }
         }
-        println(cuList)
+//        println(cuList)
         val reg = """"against":(.*?)"vote":([.0-9]+)""".r
         val comments = entity.split("\"comments\":").last.split("},\"newListSize\"").apply(0).drop(1)
         val commentId = rsp.commentIds.filter(p =>
@@ -262,7 +262,7 @@ class NetEaseParser(app:NewsApp, newsAppColumn:NewsAppColumn, wrapper:ActorRef[s
             case Right(r) =>
               val reply = findReply(r.commentId, commentId)
               val cmt = models.Comment(app.id,app.name,app.nameCn,newsAppColumn.name,newsAppColumn.nameCn, r.content, TimeUtil.dateYYMMdd2TimeStamp(r.createTime),
-                r.source, r.user.nickname, r.user.avatar, task.url, task.commentUrl.getOrElse(task.url), reply, r.commentId, r.buildLevel )
+                r.source, r.user.nickname, r.user.userId, r.user.avatar, task.url, task.commentUrl.getOrElse(task.url), reply, r.commentId, r.buildLevel, r.vote )
               Right(cmt)
             case Left(error)  =>
               Left(SpiderTaskError(s"parse comment failed, error=${error.getMessage}",-2))
@@ -292,7 +292,7 @@ class NetEaseParser(app:NewsApp, newsAppColumn:NewsAppColumn, wrapper:ActorRef[s
             case Right(r) =>
               val reply = findReply(r.commentId, commentId)
               val cmt = models.Comment(app.id,app.name,app.nameCn,newsAppColumn.name,newsAppColumn.nameCn, r.content, TimeUtil.dateYYMMdd2TimeStamp(r.createTime),
-                r.source, r.user.nickname, r.user.avatar, task.url, task.commentUrl.getOrElse(task.url), reply, r.commentId, r.buildLevel )
+                r.source, r.user.nickname, r.user.userId, r.user.avatar, task.url, task.commentUrl.getOrElse(task.url), reply, r.commentId, r.buildLevel, r.vote)
               Right(cmt)
             case Left(error)  =>
               Left(SpiderTaskError(s"parse comment failed, error=${error.getMessage}",-2))

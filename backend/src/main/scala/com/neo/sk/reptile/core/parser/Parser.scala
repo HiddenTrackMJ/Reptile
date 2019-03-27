@@ -1,6 +1,7 @@
 package com.neo.sk.reptile.core.parser
 
 import akka.actor.typed.ActorRef
+import com.neo.sk.reptile.core.increment.Increment
 import org.slf4j.LoggerFactory
 import com.neo.sk.reptile.core.spider._
 import com.neo.sk.reptile.core.spider
@@ -16,19 +17,17 @@ import com.neo.sk.reptile.models._
   * 解析网页工具
   */
 object Parser {
-  def main(args: Array[String]): Unit = {
-//    val parse = new NetEaseParser()
+
+  def apply(app:NewsApp,
+    newsAppColumn:NewsAppColumn,
+    wrapper:ActorRef[spider.SpiderRst], increment:Increment): Parser = {
+    app.name match {
+      case "sina" => new SinaParser(app,newsAppColumn,wrapper,increment)
+      case "tencent" => new TencentParser(app,newsAppColumn,wrapper,increment)
+      case "netEase" => new NetEaseParser(app,newsAppColumn,wrapper,increment)
+      case _ => null
+    }
   }
-//  def apply(app:NewsApp,
-//    newsAppColumn:NewsAppColumn,
-//    wrapper:ActorRef[spider.SpiderRst], increment:Increment): Parser = {
-//    app.name match {
-//      case "sina" => new SinaParser(app,newsAppColumn,wrapper,increment)
-//      case "tencent" => new TencentParser(app,newsAppColumn,wrapper,increment)
-//      case "netEase" => new NetEaseParser(app,newsAppColumn,wrapper,increment)
-//      case _ => null
-//    }
-//  }
 
 }
 

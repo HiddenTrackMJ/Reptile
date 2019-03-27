@@ -4,9 +4,9 @@ import java.util.concurrent.TimeUnit
 
 import com.neo.sk.utils.SessionSupport.SessionConfig
 import com.typesafe.config.{Config, ConfigFactory}
-import org.slf4j.LoggerFactory
+import org.slf4j.{Logger, LoggerFactory}
 
-import collection.JavaConverters._
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 import com.neo.sk.reptile.models._
 
@@ -35,27 +35,27 @@ object AppSettings {
   }
 
 
-  val log = LoggerFactory.getLogger(this.getClass)
-  val config = ConfigFactory.parseResources("product.conf").withFallback(ConfigFactory.load())
+  val log: Logger = LoggerFactory.getLogger(this.getClass)
+  val config: Config = ConfigFactory.parseResources("product.conf").withFallback(ConfigFactory.load())
 
-  val appConfig = config.getConfig("app")
+  val appConfig: Config = config.getConfig("app")
 
-  val httpInterface = appConfig.getString("http.interface")
-  val httpPort = appConfig.getInt("http.port")
-
-
-  val slickConfig = config.getConfig("slick.db")
-  val slickUrl = slickConfig.getString("url")
-  val slickUser = slickConfig.getString("user")
-  val slickPassword = slickConfig.getString("password")
-  val slickMaximumPoolSize = slickConfig.getInt("maximumPoolSize")
-  val slickConnectTimeout = slickConfig.getInt("connectTimeout")
-  val slickIdleTimeout = slickConfig.getInt("idleTimeout")
-  val slickMaxLifetime = slickConfig.getInt("maxLifetime")
+  val httpInterface: String = appConfig.getString("http.interface")
+  val httpPort: Int = appConfig.getInt("http.port")
 
 
+  val slickConfig: Config = config.getConfig("slick.db")
+  val slickUrl: String = slickConfig.getString("url")
+  val slickUser: String = slickConfig.getString("user")
+  val slickPassword: String = slickConfig.getString("password")
+  val slickMaximumPoolSize: Int = slickConfig.getInt("maximumPoolSize")
+  val slickConnectTimeout: Int = slickConfig.getInt("connectTimeout")
+  val slickIdleTimeout: Int = slickConfig.getInt("idleTimeout")
+  val slickMaxLifetime: Int = slickConfig.getInt("maxLifetime")
 
-  val sessionConfig = {
+
+
+  val sessionConfig: SessionConfig = {
     val sConf = config.getConfig("session")
     SessionConfig(
       cookieName = sConf.getString("cookie.name"),
@@ -71,17 +71,9 @@ object AppSettings {
 
   }
 
-  val wxMpAppId = appConfig.getString("wxMpAppId")
-
-  val emailConfig = config.getConfig("dependence.email")
-  val emailHost = emailConfig.getString("host")
-  val emailPort = emailConfig.getString("port")
-  val addresserEmail = emailConfig.getString("addresserEmail")
-  val addresserPwd = emailConfig.getString("addresserPwd")
-  val ccEmail = emailConfig.getStringList("ccAddress").asScala.toList
 
 
-  val appSecureMap = {
+  val appSecureMap: Map[String, String] = {
     val appIds = appConfig.getStringList("client.appIds").asScala
     val secureKeys = appConfig.getStringList("client.secureKeys").asScala
     require(appIds.length == secureKeys.length, "appIdList.length and secureKeys.length not equel.")
@@ -90,21 +82,21 @@ object AppSettings {
 
   object proxyConf {
     private val proxyConfig = config.getConfig("proxy")
-    lazy val isWork = proxyConfig.getBoolean("isWork")
-    lazy val proxyFetchUrl = proxyConfig.getString("proxyFetchUrl")
+    lazy val isWork: Boolean = proxyConfig.getBoolean("isWork")
+    lazy val proxyFetchUrl: String = proxyConfig.getString("proxyFetchUrl")
   }
 
   object SpiderConf {
     private val cf = config.getConfig("spider")
-    val isWork = cf.getBoolean("isWork")
-    val spiderNum = cf.getInt("spiderNum")
-    val idleInterval = cf.getLong("spiderIdleInterval")
+    val isWork: Boolean = cf.getBoolean("isWork")
+    val spiderNum: Int = cf.getInt("spiderNum")
+    val idleInterval: Long = cf.getLong("spiderIdleInterval")
   }
 
   object NewsAppConf{
     private val cf = config.getConfig("newsApp")
 
-    val duplicatedFilterTime = cf.getLong("duplicatedFilterTime") * 24 * 60 * 60 * 1000
+    val duplicatedFilterTime: Long = cf.getLong("duplicatedFilterTime") * 24 * 60 * 60 * 1000
 
     val newsAppMap = new mutable.HashMap[Int,NewsApp]()
 
@@ -206,9 +198,9 @@ object AppSettings {
       newsAppMap.put(id,newsApp)
     }
 
-    def init:Unit = {
-      sina
-      tencent
+    def init() :Unit = {
+//      sina
+//      tencent
       ntes
     }
   }

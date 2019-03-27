@@ -35,7 +35,7 @@ package object spider {
 
   case class SpiderTaskSuccess(entity:String,code:Int = 200,url: String, commentUrl: Option[String] = None)
   case class SpiderTaskError(entity:String,code:Int)
-  final case class SpiderRst(task: SpiderTask, rst: Either[SpiderTaskError, SpiderTaskSuccess])
+  final case class SpiderRst(task: SpiderTask, rst: Either[SpiderTaskError, SpiderTaskSuccess])extends Column.Command
 
   object spiderHeader{
     private val sinaHttpHeaders = List[Header](

@@ -10,7 +10,7 @@ import akka.http.scaladsl.Http
 import akka.routing.RoundRobinPool
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-import com.neo.sk.reptile.core.StoreActor
+import com.neo.sk.reptile.core.{SourceManager, StoreActor}
 import com.neo.sk.reptile.http.HttpService
 
 import scala.language.postfixOps
@@ -46,6 +46,8 @@ object Boot extends HttpService {
   val spiderManager: ActorRef[SpiderManager.Command] = system.spawn(SpiderManager.create(),"spiderManager")
 
   val storeActor: ActorRef[StoreActor.Command] = system.actorOf(RoundRobinPool(3).props(PropsAdapter(StoreActor.work)), "StoreActor")
+
+  val newsAppManager: ActorRef[SourceManager.Command] = system.spawn(SourceManager.create(spiderManager,storeActor),"SourceManager")
 
   def main(args: Array[String]): Unit = {
     log.info("Starting.")

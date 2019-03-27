@@ -1,11 +1,11 @@
-import _root_.org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
+
 
 
 val scalaV = "2.12.6"
 //val scalaV = "2.11.8"
 
 val projectName = "reptile"
-val projectVersion = "2019.02.27"
+val projectVersion = "2019.3.27"
 
 
 resolvers += Resolver.sonatypeRepo("snapshots")
@@ -25,7 +25,6 @@ def commonSettings = Seq(
 lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
   .settings(name := "shared")
   .settings(commonSettings: _*)
-
 
 lazy val sharedJvm = shared.jvm
 lazy val sharedJs = shared.js
@@ -60,6 +59,7 @@ lazy val frontend = (project in file("frontend"))
     )
   )
   .dependsOn(sharedJs)
+
 
 // Akka Http based backend
 lazy val backend = (project in file("backend")).enablePlugins(PackPlugin)
@@ -104,7 +104,7 @@ lazy val backend = (project in file("backend")).enablePlugins(PackPlugin)
   .dependsOn(sharedJvm)
 
 lazy val root = (project in file("."))
-  .aggregate( frontend, backend)
+  .aggregate(frontend, backend)
   .settings(name := projectName)
 
 
